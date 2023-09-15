@@ -13,12 +13,13 @@ namespace Practic_10_09
 {
     public partial class Form1 : Form
     {
+        private ToolStripMenuItem status_bar = new ToolStripMenuItem("Строка состояния") { Checked = true, CheckOnClick = true };
         public Form1()
         {
             InitializeComponent();
 
             openFileDialog1.Filter = "Текстовые документы (*.txt)|*.txt|Все файлы (*.*)|*.*";
-            saveFileDialog1.Filter = "Tекстовые документы (*.txt)|*.txt|Все файлы (*.*)|*.*";
+            saveFileDialog1.Filter = "Tекстовые документы (*.txt)|*.txt";
 
             ToolStripMenuItem file = new ToolStripMenuItem("Файл");
 
@@ -105,8 +106,8 @@ namespace Practic_10_09
             def.ShortcutKeys = Keys.Control | Keys.D0;
             def.Click += Def_Click;
 
-            ToolStripMenuItem status_bar = new ToolStripMenuItem("Строка состояния") { Checked = true, CheckOnClick = true };
-            //status_bar.Click += Status_bar_Click;
+            
+            status_bar.Click += Status_bar_Click;
 
             view.DropDown.Items.Add(scale);
 
@@ -118,9 +119,19 @@ namespace Practic_10_09
 
             ToolStripMenuItem reference = new ToolStripMenuItem("Справка");
 
-            ToolStripMenuItem about_program = new ToolStripMenuItem("О программе");
+            ToolStripMenuItem watch_reference = new ToolStripMenuItem("Посмотреть справку");
+            watch_reference.Click += Watch_reference_Click;
 
+            ToolStripMenuItem about_program = new ToolStripMenuItem("О программе");
+            about_program.Click += About_program_Click;
+
+            ToolStripMenuItem feedback = new ToolStripMenuItem("Отправить отзыв");
+            feedback.Click += Feedback_Click;
+
+            reference.DropDown.Items.Add(watch_reference);
+            reference.DropDown.Items.Add(feedback);
             reference.DropDown.Items.Add(about_program);
+
 
 
 
@@ -131,19 +142,81 @@ namespace Practic_10_09
             menuStrip1.Items.Add(reference);
         }
 
+        private void Feedback_Click(object sender, EventArgs e)
+        {
+            string url = "https://t.me/vadim3389";
+
+            try
+            {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при открытии ссылки: " + ex.Message);
+            }
+        }
+
+        private void About_program_Click(object sender, EventArgs e)
+        {
+            Form5 form5 = new Form5();
+            form5.Show();
+        }
+
+        private void Watch_reference_Click(object sender, EventArgs e)
+        {
+            string url = "https://www.bing.com/search?q=справка+по+использованию+блокнота+в+windows%c2%a010&filters=guid:\"4466414-ru-dia\"%20lang:\"ru\"&form=T00032&ocid=HelpPane-BingIA";
+
+            try
+            {
+                System.Diagnostics.Process.Start(url);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Ошибка при открытии ссылки: " + ex.Message);
+            }
+        }
+
+        private void Status_bar_Click(object sender, EventArgs e)
+        {
+            toolStrip1.Visible = status_bar.Checked;
+        }
+
         private void Def_Click(object sender, EventArgs e)
         {
-            richTextBox1.ZoomFactor = 0.1f;
+            richTextBox1.ZoomFactor = 1.0f;
+            UpdateZoomPercentage();
         }
 
         private void Decrease_Click(object sender, EventArgs e)
         {
-            richTextBox1.ZoomFactor -= 0.1f;
+            const float maximal_value = 0.1f;
+            const float zoom_increment = 0.1f;
+
+            if (richTextBox1.ZoomFactor - zoom_increment >= maximal_value)
+            {
+                richTextBox1.ZoomFactor -= zoom_increment;
+                UpdateZoomPercentage();
+            }
+            else
+            {
+
+            }
         }
 
         private void Increase_Click(object sender, EventArgs e)
         {
-            richTextBox1.ZoomFactor += 0.1f;
+            const float maximal_value = 5.0f;  
+            const float zoom_increment = 0.1f;  
+
+            if (richTextBox1.ZoomFactor + zoom_increment <= maximal_value)
+            {
+                richTextBox1.ZoomFactor += zoom_increment;
+                UpdateZoomPercentage();
+            }
+            else
+            {
+                
+            }
         }
 
         private void Font_Click(object sender, EventArgs e)
@@ -286,9 +359,33 @@ namespace Practic_10_09
 
         private void Form1_Load(object sender, EventArgs e)
         {
-
+         
+            UpdateCursorPosition();
+            UpdateZoomPercentage();
         }
 
-       
+        private void UpdateCursorPosition()
+        {
+            int cursorPosition = richTextBox1.SelectionStart;
+
+            int lineNumber = richTextBox1.GetLineFromCharIndex(cursorPosition) + 1;
+
+            int columnNumber = cursorPosition - richTextBox1.GetFirstCharIndexFromLine(lineNumber - 1) + 1;
+
+            toolStripLabel1.Text = "Стр " + lineNumber.ToString() + ", стлб: " + columnNumber.ToString();
+        }
+
+        private void UpdateZoomPercentage()
+        {
+            int zoomPercentage = (int)(richTextBox1.ZoomFactor * 100);
+
+            toolStripLabel2.Text = zoomPercentage + "%";
+        }
+
+        private void richTextBox1_TextChanged(object sender, EventArgs e)
+        {
+            UpdateCursorPosition();
+            UpdateZoomPercentage();
+        }
     }
 }
