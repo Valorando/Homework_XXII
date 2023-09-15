@@ -12,8 +12,8 @@ namespace Practic_10_09
 {
     public partial class Form4 : Form
     {
-        private readonly TextBox _textBoxInForm1;
-        public Form4(TextBox textBoxInForm1)
+        private readonly RichTextBox _textBoxInForm1;
+        public Form4(RichTextBox textBoxInForm1)
         {
             InitializeComponent();
             _textBoxInForm1 = textBoxInForm1;
@@ -28,16 +28,16 @@ namespace Practic_10_09
         {
             if (int.TryParse(textBox1.Text, out int string_number))
             {
-                
-                if (string_number >= 1 && string_number < _textBoxInForm1.Lines.Length)
+
+                int textBoxLineNumber = string_number - 1;
+
+                if (textBoxLineNumber >= 0 && textBoxLineNumber < _textBoxInForm1.Lines.Length)
                 {
-                    int index = string_number - 1;
                     _textBoxInForm1.Focus();
-                    _textBoxInForm1.SelectionStart = _textBoxInForm1.GetFirstCharIndexFromLine(string_number);
-                    _textBoxInForm1.SelectionLength = 0; 
-                    _textBoxInForm1.ScrollToCaret(); 
+                    _textBoxInForm1.SelectionStart = _textBoxInForm1.GetFirstCharIndexFromLine(textBoxLineNumber);
+                    _textBoxInForm1.SelectionLength = 0;
+                    _textBoxInForm1.ScrollToCaret();
                 }
-              
                 else
                 {
                     MessageBox.Show("Строка не найдена.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -47,8 +47,8 @@ namespace Practic_10_09
             {
                 MessageBox.Show("Введен некорректный номер строки.", "Ошибка", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-       
         }
+
 
         private void button2_Click(object sender, EventArgs e)
         {

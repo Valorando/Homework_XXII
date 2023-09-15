@@ -12,9 +12,9 @@ namespace Practic_10_09
 {
     public partial class Form2 : Form
     {
-        private readonly TextBox _textBoxInForm1;
+        private readonly RichTextBox _textBoxInForm1;
 
-        public Form2(TextBox textBoxInForm1)
+        public Form2(RichTextBox textBoxInForm1)
         {
             InitializeComponent();
             _textBoxInForm1 = textBoxInForm1;
