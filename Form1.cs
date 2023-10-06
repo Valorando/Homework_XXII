@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -140,6 +141,12 @@ namespace Practic_10_09
             menuStrip1.Items.Add(format);
             menuStrip1.Items.Add(view);
             menuStrip1.Items.Add(reference);
+
+
+            richTextBox1.DragEnter += new DragEventHandler(richTextBox1_DragEnter);
+            richTextBox1.DragDrop += new DragEventHandler(richTextBox1_DragDrop);
+
+            richTextBox1.AllowDrop = true;
         }
 
         private void Feedback_Click(object sender, EventArgs e)
@@ -387,5 +394,33 @@ namespace Practic_10_09
             UpdateCursorPosition();
             UpdateZoomPercentage();
         }
+
+        private void richTextBox1_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+                // Проверяем, что это текстовый файл
+                if (files.Length == 1 && Path.GetExtension(files[0]).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+                    e.Effect = DragDropEffects.Copy;
+            }
+        }
+
+        private void richTextBox1_DragDrop(object sender, DragEventArgs e)
+        {
+            string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+
+            if (files.Length == 1 && Path.GetExtension(files[0]).Equals(".txt", StringComparison.OrdinalIgnoreCase))
+            {
+                // Читаем текст из файла
+                string text = File.ReadAllText(files[0]);
+
+                // Устанавливаем текст в RichTextBox
+                richTextBox1.Text = text;
+            }
+        }
+
+
     }
 }
